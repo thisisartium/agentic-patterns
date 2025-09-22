@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Pattern Selector - Find the Right Pattern for Your Use Case</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .selector-container {
+            padding: 40px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .results {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f0f7ff;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pattern-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .pattern-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .pattern-tags {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tag.mature { background: #d4edda; color: #155724; }
+        .tag.emerging { background: #fff3cd; color: #856404; }
+        .tag.experimental { background: #f8d7da; color: #721c24; }
+        .tag.low { background: #cfe2ff; color: #084298; }
+        .tag.medium { background: #ffd6a5; color: #842029; }
+        .tag.high { background: #f5c2c7; color: #842029; }
+
+        .pattern-description {
+            color: #555;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .pattern-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: transform 0.3s ease;
+        }
+
+        .pattern-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .reset-button {
+            padding: 12px 30px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .reset-button:hover {
+            background: #5a6268;
+        }
+
+        .confidence-score {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Agentic Pattern Selector</h1>
+            <p class="subtitle">Answer a few questions to find the perfect pattern for your multi-agent system</p>
+        </header>
+
+        <div class="selector-container">
+            <!-- Question 1: System Scale -->
+            <div class="question" id="q1">
+                <h3>1. How many agents will your system have?</h3>
+                <div class="options">
+                    <div class="option" data-answer="single">Single Agent</div>
+                    <div class="option" data-answer="few">2-5 Agents</div>
+                    <div class="option" data-answer="medium">6-20 Agents</div>
+                    <div class="option" data-answer="large">20+ Agents</div>
+                </div>
+            </div>
+
+            <!-- Question 2: Coordination Type -->
+            <div class="question" id="q2">
+                <h3>2. How do agents need to coordinate?</h3>
+                <div class="options">
+                    <div class="option" data-answer="none">No coordination needed</div>
+                    <div class="option" data-answer="sequential">Sequential (one after another)</div>
+                    <div class="option" data-answer="parallel">Parallel (simultaneously)</div>
+                    <div class="option" data-answer="hierarchical">Hierarchical (manager-worker)</div>
+                    <div class="option" data-answer="collaborative">Collaborative (working together)</div>
+                    <div class="option" data-answer="market">Market-based (competitive)</div>
+                </div>
+            </div>
+
+            <!-- Question 3: Communication Pattern -->
+            <div class="question" id="q3">
+                <h3>3. What's your primary communication need?</h3>
+                <div class="options">
+                    <div class="option" data-answer="sync">Synchronous (wait for response)</div>
+                    <div class="option" data-answer="async">Asynchronous (fire and forget)</div>
+                    <div class="option" data-answer="broadcast">Broadcast (one to many)</div>
+                    <div class="option" data-answer="shared">Shared workspace</div>
+                    <div class="option" data-answer="event">Event-driven</div>
+                </div>
+            </div>
+
+            <!-- Question 4: Context Management -->
+            <div class="question" id="q4">
+                <h3>4. How will agents manage context/memory?</h3>
+                <div class="options">
+                    <div class="option" data-answer="none">No shared context</div>
+                    <div class="option" data-answer="shared">Shared memory store</div>
+                    <div class="option" data-answer="semantic">Semantic/knowledge base</div>
+                    <div class="option" data-answer="episodic">Conversation history</div>
+                    <div class="option" data-answer="compressed">Size-limited context</div>
+                </div>
+            </div>
+
+            <!-- Question 5: Primary Challenge -->
+            <div class="question" id="q5">
+                <h3>5. What's your biggest challenge?</h3>
+                <div class="options">
+                    <div class="option" data-answer="discovery">Agent discovery</div>
+                    <div class="option" data-answer="reliability">Reliability/resilience</div>
+                    <div class="option" data-answer="scale">Scalability</div>
+                    <div class="option" data-answer="security">Security/trust</div>
+                    <div class="option" data-answer="performance">Performance/latency</div>
+                    <div class="option" data-answer="complexity">Managing complexity</div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <h2 style="margin-bottom: 20px; color: #333;">📊 Recommended Patterns</h2>
+                <div id="pattern-recommendations"></div>
+                <button class="reset-button" onclick="resetSelector()">Start Over</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Part of the Agentic Patterns Library | <a href="https://github.com/yourusername/agentic-patterns">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const patterns = {
+            'agent-registry': {
+                name: 'Agent Registry Pattern',
+                tags: ['mature', 'medium', 'required'],
+                description: 'Dynamic catalogue for agent discovery and registration. Essential for systems with multiple agents that need to find each other at runtime.',
+                relevance: { few: 0.5, medium: 0.8, large: 1.0, discovery: 1.0 }
+            },
+            'message-transport': {
+                name: 'Message Transport Pattern',
+                tags: ['mature', 'low', 'required'],
+                description: 'Reliable message passing infrastructure with queues, topics, and delivery guarantees.',
+                relevance: { few: 0.7, medium: 0.9, large: 1.0, async: 1.0, reliability: 0.8 }
+            },
+            'sequential-orchestration': {
+                name: 'Sequential Orchestration',
+                tags: ['mature', 'low', 'deterministic'],
+                description: 'Execute tasks in strict order with explicit dependencies. Perfect for pipeline-style workflows.',
+                relevance: { sequential: 1.0, performance: 0.3 }
+            },
+            'concurrent-orchestration': {
+                name: 'Concurrent Orchestration',
+                tags: ['mature', 'medium', 'parallel'],
+                description: 'Run independent tasks in parallel to reduce total execution time.',
+                relevance: { parallel: 1.0, performance: 0.8, scale: 0.7 }
+            },
+            'hierarchical': {
+                name: 'Hierarchical Pattern',
+                tags: ['mature', 'medium', 'structured'],
+                description: 'Manager delegates tasks to specialized workers and aggregates results.',
+                relevance: { hierarchical: 1.0, medium: 0.6, large: 0.8, complexity: 0.7 }
+            },
+            'group-chat': {
+                name: 'Group Chat Pattern',
+                tags: ['emerging', 'medium', 'collaborative'],
+                description: 'Agents collaborate through moderated conversational turns with structured dialogue.',
+                relevance: { collaborative: 1.0, shared: 0.6 }
+            },
+            'blackboard': {
+                name: 'Blackboard Pattern',
+                tags: ['mature', 'medium', 'collaborative'],
+                description: 'Shared workspace where agents post partial solutions and observe updates.',
+                relevance: { collaborative: 0.8, shared: 1.0 }
+            },
+            'publish-subscribe': {
+                name: 'Publish-Subscribe Pattern',
+                tags: ['mature', 'medium', 'decoupled'],
+                description: 'Event-driven communication where producers emit events and subscribers react independently.',
+                relevance: { broadcast: 1.0, event: 1.0, async: 0.8 }
+            },
+            'shared-memory': {
+                name: 'Shared Memory Pattern',
+                tags: ['mature', 'medium', 'fundamental'],
+                description: 'Central store for shared context with controlled access and versioning.',
+                relevance: { shared: 1.0, medium: 0.5, large: 0.7 }
+            },
+            'semantic-memory': {
+                name: 'Semantic Memory Pattern',
+                tags: ['emerging', 'medium', 'knowledge'],
+                description: 'Store and retrieve facts/concepts using embeddings or knowledge graphs.',
+                relevance: { semantic: 1.0 }
+            },
+            'market-based': {
+                name: 'Market-Based Coordination',
+                tags: ['experimental', 'high', 'distributed'],
+                description: 'Allocate tasks through bidding based on agent capabilities and costs.',
+                relevance: { market: 1.0, large: 0.6, scale: 0.5 }
+            },
+            'resilient-communication': {
+                name: 'Resilient Communication',
+                tags: ['mature', 'high', 'reliability'],
+                description: 'Communication layer that tolerates faults via retries, timeouts, and failover.',
+                relevance: { reliability: 1.0, large: 0.6 }
+            },
+            'zero-trust': {
+                name: 'Zero-Trust Boundary',
+                tags: ['emerging', 'high', 'security'],
+                description: 'Authenticate and authorize every call with no implicit trust.',
+                relevance: { security: 1.0, large: 0.5 }
+            },
+            'progressive-compression': {
+                name: 'Progressive Compression',
+                tags: ['mature', 'medium', 'scalability'],
+                description: 'Summarize aging context recursively to maintain size limits.',
+                relevance: { compressed: 1.0, episodic: 0.6 }
+            }
+        };
+
+        const answers = {};
+
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.closest('.question');
+                question.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+
+                const questionId = question.id;
+                answers[questionId] = this.dataset.answer;
+
+                if (Object.keys(answers).length === 5) {
+                    showRecommendations();
+                }
+            });
+        });
+
+        function calculateRelevance(pattern, answers) {
+            let score = 0;
+            let factors = 0;
+
+            Object.values(answers).forEach(answer => {
+                if (pattern.relevance[answer]) {
+                    score += pattern.relevance[answer];
+                    factors++;
+                }
+            });
+
+            return factors > 0 ? (score / factors) * 100 : 0;
+        }
+
+        function showRecommendations() {
+            const recommendations = [];
+
+            for (const [key, pattern] of Object.entries(patterns)) {
+                const relevance = calculateRelevance(pattern, answers);
+                if (relevance > 30) {
+                    recommendations.push({ key, pattern, relevance });
+                }
+            }
+
+            recommendations.sort((a, b) => b.relevance - a.relevance);
+
+            const resultsHTML = recommendations.slice(0, 5).map(rec => `
+                <div class="pattern-card">
+                    <h4>
+                        ${rec.pattern.name}
+                        <span class="confidence-score">${Math.round(rec.relevance)}% match</span>
+                    </h4>
+                    <div class="pattern-tags">
+                        ${rec.pattern.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join('')}
+                    </div>
+                    <p class="pattern-description">${rec.pattern.description}</p>
+                    <a href="#" class="pattern-link">Learn More →</a>
+                </div>
+            `).join('');
+
+            document.getElementById('pattern-recommendations').innerHTML = resultsHTML;
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetSelector() {
+            document.querySelectorAll('.option.selected').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('results').classList.remove('show');
+            Object.keys(answers).forEach(key => delete answers[key]);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

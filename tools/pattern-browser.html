@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Patterns Browser - Search & Filter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .tag-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag-filter {
+            padding: 5px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            background: white;
+        }
+
+        .tag-filter:hover {
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .tag-filter.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .stats {
+            margin: 0 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .pattern-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .pattern-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .pattern-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .pattern-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .pattern-id {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .pattern-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .pattern-category {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #f0f7ff;
+            color: #0066cc;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .pattern-tags {
+            display: flex;
+            gap: 6px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag.mature { background: #d4edda; color: #155724; }
+        .tag.emerging { background: #fff3cd; color: #856404; }
+        .tag.experimental { background: #f8d7da; color: #721c24; }
+        .tag.low-complexity { background: #d1ecf1; color: #0c5460; }
+        .tag.medium-complexity { background: #ffeedd; color: #664400; }
+        .tag.high-complexity { background: #f5c2c7; color: #842029; }
+
+        .pattern-problem {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .pattern-solution {
+            font-size: 14px;
+            color: #333;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            border-radius: 4px;
+        }
+
+        .pattern-when {
+            font-size: 13px;
+            color: #666;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .pattern-related {
+            font-size: 12px;
+            color: #999;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .pattern-related a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .pattern-related a:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .category-header {
+            grid-column: 1 / -1;
+            padding: 10px 0;
+            margin: 20px 0 0 0;
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .reset-button {
+            padding: 8px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .reset-button:hover {
+            background: #5a6268;
+        }
+
+        .dependency-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .dependency-link:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Agentic Patterns Browser</h1>
+        <p>Search and filter multi-agent system patterns for quick discovery</p>
+    </div>
+
+    <div class="controls">
+        <input type="text" class="search-box" id="searchBox"
+               placeholder="Search patterns by name, problem, solution, or use case...">
+
+        <div class="filters">
+            <div class="filter-group">
+                <span class="filter-label">Maturity</span>
+                <div class="tag-filters">
+                    <button class="tag-filter" data-type="maturity" data-value="mature">Mature</button>
+                    <button class="tag-filter" data-type="maturity" data-value="emerging">Emerging</button>
+                    <button class="tag-filter" data-type="maturity" data-value="experimental">Experimental</button>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <span class="filter-label">Complexity</span>
+                <div class="tag-filters">
+                    <button class="tag-filter" data-type="complexity" data-value="low">Low</button>
+                    <button class="tag-filter" data-type="complexity" data-value="medium">Medium</button>
+                    <button class="tag-filter" data-type="complexity" data-value="high">High</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="reset-button" onclick="resetFilters()">Reset All</button>
+    </div>
+
+    <div class="stats">
+        <span id="resultCount">Showing 53 patterns</span>
+        <a href="#" onclick="showDependencyGraph()" class="dependency-link">View Dependency Graph</a>
+    </div>
+
+    <div class="pattern-grid" id="patternGrid">
+        <!-- Patterns will be inserted here -->
+    </div>
+
+    <script>
+        const patterns = [
+            // Foundation Patterns
+            {
+                id: "1.1",
+                name: "Agent Registry Pattern",
+                category: "Foundation",
+                tags: ["mature", "medium-complexity", "required"],
+                problem: "Hard-coded endpoints create fragility and block evolution",
+                solution: "Catalogue where agents register identity/capabilities and discover peers at runtime",
+                whenToUse: "> 3 agents, multi-team development, rolling evolution",
+                related: ["Message Transport", "Capability Discovery"]
+            },
+            {
+                id: "1.2",
+                name: "Message Transport Pattern",
+                category: "Foundation",
+                tags: ["mature", "low-complexity", "required"],
+                problem: "Ad-hoc HTTP/sockets diverge in schema and retry logic",
+                solution: "Shared queue/bus/stream with acknowledgements and retries",
+                whenToUse: "≥ 2 agents requiring async coordination",
+                related: ["Publish-Subscribe", "Agent Registry"]
+            },
+            {
+                id: "1.3",
+                name: "Agent Lifecycle Management",
+                category: "Foundation",
+                tags: ["mature", "medium-complexity"],
+                problem: "Without lifecycle hooks, restart storms and zombie agents accumulate",
+                solution: "Standard hooks for create, start, pause, resume, scale, retire under supervision",
+                whenToUse: "Multi-node deployments, bursty workloads, rolling updates",
+                related: ["Resilient Communication", "Agent Registry"]
+            },
+
+            // Communication Patterns
+            {
+                id: "2.1.1",
+                name: "Request-Reply Pattern",
+                category: "Communication",
+                tags: ["mature", "low-complexity", "synchronous"],
+                problem: "Blocking calls can stall pipelines and amplify failures",
+                solution: "Simple synchronous query-response between agents",
+                whenToUse: "Low-latency reads or control paths with bounded work",
+                related: ["Version Negotiation", "Event-Driven Architecture"]
+            },
+            {
+                id: "2.1.2",
+                name: "Agent-to-Agent Protocol",
+                category: "Communication",
+                tags: ["emerging", "medium-complexity", "standardised"],
+                problem: "Heterogeneous agents struggle without common contract",
+                solution: "Shared schema/handshake for direct interactions with capability negotiation",
+                whenToUse: "Cross-team or cross-language agent meshes",
+                related: ["Standardised Message Format"]
+            },
+            {
+                id: "2.2.1",
+                name: "Blackboard Pattern",
+                category: "Communication",
+                tags: ["mature", "medium-complexity", "collaborative"],
+                problem: "Complex problems need incremental multi-specialist contributions",
+                solution: "Shared workspace where agents post partial solutions",
+                whenToUse: "Open-ended, multi-step problem solving",
+                related: ["Progressive Compression"]
+            },
+            {
+                id: "2.2.2",
+                name: "Publish-Subscribe Pattern",
+                category: "Communication",
+                tags: ["mature", "medium-complexity", "decoupled"],
+                problem: "Tight coupling blocks independent evolution",
+                solution: "Producers emit events; subscribers react independently",
+                whenToUse: "Event-centric systems, multi-consumer fan-out",
+                related: ["Message Transport", "Event Sourcing"]
+            },
+            {
+                id: "2.2.3",
+                name: "Stigmergic Communication",
+                category: "Communication",
+                tags: ["experimental", "high-complexity", "indirect"],
+                problem: "Direct messaging cannot capture distributed hints/cues",
+                solution: "Agents coordinate by writing traces to environment",
+                whenToUse: "Swarm-like behaviors, exploration/exploitation",
+                related: ["Blackboard Pattern"]
+            },
+            {
+                id: "2.3.1",
+                name: "Model Context Protocol",
+                category: "Communication",
+                tags: ["emerging", "medium-complexity", "standardised"],
+                problem: "Tool access without discipline leads to leakage/loops",
+                solution: "Connect agents/LLMs to tools with policy-controlled calls",
+                whenToUse: "Tool-calling agents in regulated/cost-sensitive contexts",
+                related: ["Tool Use Pattern", "Zero-Trust Boundary"]
+            },
+            {
+                id: "2.3.2",
+                name: "Event-Driven Architecture",
+                category: "Communication",
+                tags: ["mature", "high-complexity", "scalable"],
+                problem: "Synchronous workflows hit scale/resilience limits",
+                solution: "System reacts to events with async handlers and state transitions",
+                whenToUse: "High-scale, loosely coupled domains",
+                related: ["Event Sourcing", "Message Transport"]
+            },
+
+            // Orchestration Patterns
+            {
+                id: "3.1",
+                name: "Sequential Orchestration",
+                category: "Orchestration",
+                tags: ["mature", "low-complexity", "deterministic"],
+                problem: "Parallelism complicates when outputs depend on previous steps",
+                solution: "Execute tasks in strict order with explicit dependencies",
+                whenToUse: "Linear pipelines with strict ordering",
+                related: ["Planning Pattern"]
+            },
+            {
+                id: "3.2",
+                name: "Concurrent Orchestration",
+                category: "Orchestration",
+                tags: ["mature", "medium-complexity", "parallel"],
+                problem: "Sequential flows waste time on independent subtasks",
+                solution: "Run independent tasks in parallel to reduce total time",
+                whenToUse: "Independent or weakly coupled subtasks",
+                related: ["Task Decomposition"]
+            },
+            {
+                id: "3.3",
+                name: "Hierarchical Pattern",
+                category: "Orchestration",
+                tags: ["mature", "medium-complexity", "structured"],
+                problem: "Flat groups struggle with coordination/load-balancing",
+                solution: "Manager delegates tasks to workers and aggregates results",
+                whenToUse: "Large task pools, heterogeneous expertise",
+                related: ["Agent Lifecycle Management"]
+            },
+            {
+                id: "3.4",
+                name: "Group Chat Pattern",
+                category: "Orchestration",
+                tags: ["emerging", "medium-complexity", "collaborative"],
+                problem: "Unstructured chat can drift, loop, or explode in length",
+                solution: "Agents collaborate via moderated conversational turns",
+                whenToUse: "Open-ended design discussions, brainstorming",
+                related: ["Human-in-the-Loop", "Reflection Pattern"]
+            },
+            {
+                id: "3.5",
+                name: "Handoff Pattern",
+                category: "Orchestration",
+                tags: ["emerging", "medium-complexity", "dynamic"],
+                problem: "Single agent cannot cover all skills efficiently",
+                solution: "Switch active agent by capability/context during task",
+                whenToUse: "Multi-skill flows, compliance constraints",
+                related: ["Agent Registry", "Capability Discovery"]
+            },
+            {
+                id: "3.6",
+                name: "Market-Based Coordination",
+                category: "Orchestration",
+                tags: ["experimental", "high-complexity", "distributed"],
+                problem: "Central schedulers struggle with heterogeneous agents",
+                solution: "Allocate tasks via bids based on utility/cost",
+                whenToUse: "Heterogeneous costs/capabilities, elastic supply",
+                related: ["Version Negotiation"]
+            },
+
+            // Context Management Patterns
+            {
+                id: "4.1.1",
+                name: "Shared Memory Pattern",
+                category: "Context Management",
+                tags: ["mature", "medium-complexity", "fundamental"],
+                problem: "Agents duplicate state or drift when state is local-only",
+                solution: "Central store for shared context with controlled access",
+                whenToUse: "Any multi-agent context beyond trivial size",
+                related: ["Progressive Compression"]
+            },
+            {
+                id: "4.1.2",
+                name: "Semantic Memory Pattern",
+                category: "Context Management",
+                tags: ["emerging", "medium-complexity", "knowledge"],
+                problem: "Keyword search misses relevant knowledge",
+                solution: "Store facts/concepts for semantic retrieval (embeddings/triples)",
+                whenToUse: "Cross-domain knowledge needs, ambiguous queries",
+                related: ["Shared Knowledge Store"]
+            },
+            {
+                id: "4.1.3",
+                name: "Episodic Memory Pattern",
+                category: "Context Management",
+                tags: ["emerging", "medium-complexity", "experience"],
+                problem: "Without episodes, agents lose history for continuity",
+                solution: "Record interactions/events with timestamps and participants",
+                whenToUse: "Conversational or longitudinal workflows",
+                related: ["Insight Distillation", "Experience Replay"]
+            },
+            {
+                id: "4.1.4",
+                name: "Procedural Memory Pattern",
+                category: "Context Management",
+                tags: ["emerging", "high-complexity", "skills"],
+                problem: "Tacit skill remains trapped in prompts/scripts",
+                solution: "Capture learned procedures/skills for reuse",
+                whenToUse: "Recurring tasks with proven procedures",
+                related: ["Continuous Fine-Tuning"]
+            },
+            {
+                id: "4.2.1",
+                name: "Progressive Compression",
+                category: "Context Management",
+                tags: ["mature", "medium-complexity", "scalability"],
+                problem: "Context windows/stores cannot grow without bounds",
+                solution: "Summarise aging context recursively to retain signal",
+                whenToUse: "Any long-running context stream",
+                related: ["Selective Pruning"]
+            },
+            {
+                id: "4.2.2",
+                name: "Selective Pruning Pattern",
+                category: "Context Management",
+                tags: ["mature", "medium-complexity", "efficiency"],
+                problem: "Irrelevant data increases latency and cost",
+                solution: "Remove irrelevant context via scores/policies",
+                whenToUse: "Bounded budgets or latency targets",
+                related: ["Progressive Compression"]
+            },
+            {
+                id: "4.2.3",
+                name: "Insight Distillation",
+                category: "Context Management",
+                tags: ["emerging", "high-complexity", "intelligence"],
+                problem: "Logs contain insight but little structure",
+                solution: "Extract key decisions/rationales from raw interactions",
+                whenToUse: "Mature systems with substantial logs",
+                related: ["Reflection Loop", "Experience Replay"]
+            },
+
+            // Task Management Patterns
+            {
+                id: "5.1",
+                name: "Task Decomposition",
+                category: "Task Management",
+                tags: ["mature", "medium-complexity", "planning"],
+                problem: "Monolithic tasks hide dependencies and stall progress",
+                solution: "Split complex goals into manageable subtasks",
+                whenToUse: "Complex goals with obvious sub-steps",
+                related: ["Concurrent Orchestration"]
+            },
+            {
+                id: "5.2",
+                name: "Planning Pattern",
+                category: "Task Management",
+                tags: ["mature", "medium-complexity", "strategic"],
+                problem: "Act-first approaches waste tokens/time",
+                solution: "Form a plan before acting; revise as evidence arrives",
+                whenToUse: "Expensive or high-risk tasks",
+                related: ["Reflection Pattern", "Sequential Orchestration"]
+            },
+            {
+                id: "5.3",
+                name: "Reflection Pattern",
+                category: "Task Management",
+                tags: ["mature", "medium-complexity", "improvement"],
+                problem: "Repeating same mistakes burns budget and trust",
+                solution: "Self-critique outputs and adjust approach",
+                whenToUse: "Any iterative generation or decision task",
+                related: ["Reflection Loop"]
+            },
+            {
+                id: "5.4",
+                name: "Tool Use Pattern",
+                category: "Task Management",
+                tags: ["mature", "low-complexity", "integration"],
+                problem: "Re-implementing tools inside agents leads to duplication",
+                solution: "Invoke external tools/APIs under policy",
+                whenToUse: "Any external computation or data fetch",
+                related: ["Model Context Protocol", "Zero-Trust Boundary"]
+            },
+            {
+                id: "5.5",
+                name: "Capability Discovery",
+                category: "Task Management",
+                tags: ["emerging", "medium-complexity", "dynamic"],
+                problem: "Name-based lookup misses best-fit skills",
+                solution: "Discover/advertise capabilities dynamically",
+                whenToUse: "Evolving ecosystems with many skills",
+                related: ["Agent Registry", "Handoff Pattern"]
+            },
+
+            // Knowledge Management Patterns
+            {
+                id: "6.1",
+                name: "Two-Stage Knowledge Pipeline",
+                category: "Knowledge Management",
+                tags: ["emerging", "high-complexity", "comprehensive"],
+                problem: "Raw notes pile up; published knowledge lags",
+                solution: "Manage granular findings and synthesised knowledge via two paths",
+                whenToUse: "Teams that research continuously",
+                related: ["Shared Knowledge Store", "Insight Distillation"]
+            },
+            {
+                id: "6.2.1",
+                name: "Shared Knowledge Store",
+                category: "Knowledge Management",
+                tags: ["emerging", "medium-complexity", "reuse"],
+                problem: "Teams repeat research due to inaccessible prior work",
+                solution: "Common repository supports fuzzy retrieval and structured access",
+                whenToUse: "Any shared research/knowledge environment",
+                related: ["Semantic Memory Pattern"]
+            },
+
+            // Human Integration Patterns
+            {
+                id: "7.1",
+                name: "Human-in-the-Loop",
+                category: "Human Integration",
+                tags: ["mature", "medium-complexity", "oversight"],
+                problem: "Fully autonomous loops can drift or violate constraints",
+                solution: "Humans approve, correct, or guide at key points",
+                whenToUse: "High-risk outputs, regulated environments",
+                related: ["Group Chat Pattern", "Reflection Pattern"]
+            },
+            {
+                id: "7.2",
+                name: "User Elicitation",
+                category: "Human Integration",
+                tags: ["emerging", "medium-complexity", "clarification"],
+                problem: "Vague inputs cause rework and poor outputs",
+                solution: "System asks targeted questions to reduce ambiguity",
+                whenToUse: "Ambiguous inputs and costly retries",
+                related: ["Planning Pattern"]
+            },
+            {
+                id: "7.3",
+                name: "Explainability Pattern",
+                category: "Human Integration",
+                tags: ["emerging", "high-complexity", "transparency"],
+                problem: "Opaque agents undermine trust and debugging",
+                solution: "Expose reasons, inputs, and limits of decisions",
+                whenToUse: "Decision support and regulated outputs",
+                related: ["Event Sourcing"]
+            },
+            {
+                id: "7.4",
+                name: "Trust-Building Pattern",
+                category: "Human Integration",
+                tags: ["emerging", "medium-complexity", "adoption"],
+                problem: "Jumping to full autonomy spooks users",
+                solution: "Increase autonomy gradually with transparency",
+                whenToUse: "Any new autonomous capability",
+                related: ["Reflection Loop"]
+            },
+
+            // System Quality Patterns
+            {
+                id: "8.1.1",
+                name: "Resilient Communication",
+                category: "System Quality",
+                tags: ["mature", "high-complexity", "reliability"],
+                problem: "Networks and components fail unpredictably",
+                solution: "Communication layer tolerates faults via retries/failover",
+                whenToUse: "Any critical path",
+                related: ["Message Transport"]
+            },
+            {
+                id: "8.2",
+                name: "Observability Pattern",
+                category: "System Quality",
+                tags: ["emerging", "medium-complexity", "diagnostics"],
+                problem: "Without visibility, incident response drags",
+                solution: "Tracing, metrics, logs deliver runtime insight",
+                whenToUse: "Always—start day one",
+                related: ["Standardised Message Format"]
+            },
+            {
+                id: "8.3.1",
+                name: "Identity Propagation",
+                category: "System Quality",
+                tags: ["emerging", "medium-complexity", "security"],
+                problem: "Lost identity breaks auditing and least-privilege",
+                solution: "Carry caller identity/scope across agent hops",
+                whenToUse: "Any multi-hop call chain",
+                related: ["Zero-Trust Boundary"]
+            },
+            {
+                id: "8.3.2",
+                name: "Encrypted Message Bus",
+                category: "System Quality",
+                tags: ["emerging", "medium-complexity", "security"],
+                problem: "Unencrypted channels expose sensitive data",
+                solution: "Encrypt data in transit across transport",
+                whenToUse: "Always for non-public data",
+                related: ["Message Transport", "Standardised Message Format"]
+            },
+            {
+                id: "8.3.3",
+                name: "Zero-Trust Boundary",
+                category: "System Quality",
+                tags: ["emerging", "high-complexity", "security"],
+                problem: "Implicit trust enables lateral movement",
+                solution: "Authenticate/authorise every call",
+                whenToUse: "Any environment with sensitive data",
+                related: ["Identity Propagation"]
+            },
+            {
+                id: "8.4",
+                name: "Version Negotiation",
+                category: "System Quality",
+                tags: ["emerging", "medium-complexity", "interoperability"],
+                problem: "Lock-step upgrades cause outages",
+                solution: "Coexist old/new formats; upgrade gracefully",
+                whenToUse: "Multi-team, rolling upgrade environments",
+                related: ["Agent-to-Agent Protocol", "Standardised Message Format"]
+            },
+            {
+                id: "8.5",
+                name: "Configuration-Driven Capabilities",
+                category: "System Quality",
+                tags: ["emerging", "medium-complexity", "flexibility"],
+                problem: "Code pushes for toggles slow iteration",
+                solution: "Enable/disable capabilities via config",
+                whenToUse: "Feature rollout and rapid experimentation",
+                related: ["Observability Pattern"]
+            },
+            {
+                id: "8.6",
+                name: "Standardised Message Format",
+                category: "System Quality",
+                tags: ["mature", "low-complexity", "interoperability"],
+                problem: "Inconsistent payloads block routing",
+                solution: "Consistent envelopes enable interop",
+                whenToUse: "Immediately—do not delay",
+                related: ["Agent-to-Agent Protocol", "Message Transport"]
+            },
+            {
+                id: "8.7",
+                name: "Event Sourcing",
+                category: "System Quality",
+                tags: ["mature", "high-complexity", "auditability"],
+                problem: "State snapshots lose history",
+                solution: "Persist events as truth; rebuild by replay",
+                whenToUse: "High-audit domains, recovery needs",
+                related: ["Event-Driven Architecture", "Explainability Pattern"]
+            },
+
+            // Self-Improvement Patterns
+            {
+                id: "9.1",
+                name: "Reflection Loop",
+                category: "Self-Improvement",
+                tags: ["mature", "medium-complexity", "behavioural"],
+                problem: "Agents don't improve from experience",
+                solution: "Apply reflection continually to improve over time",
+                whenToUse: "Long-running agents with feedback available",
+                related: ["Reflection Pattern"]
+            },
+            {
+                id: "9.2",
+                name: "Social Learning",
+                category: "Self-Improvement",
+                tags: ["emerging", "medium-complexity"],
+                problem: "Isolated agents miss collective insights",
+                solution: "Agents observe peers and adopt winning strategies",
+                whenToUse: "Multiple similar agents with varied approaches",
+                related: []
+            },
+            {
+                id: "9.3",
+                name: "Experience Replay",
+                category: "Self-Improvement",
+                tags: ["emerging", "medium-complexity"],
+                problem: "Past interactions aren't leveraged for improvement",
+                solution: "Sample past interactions to refine prompts/models",
+                whenToUse: "Sufficient history with clear outcomes",
+                related: ["Episodic Memory Pattern"]
+            },
+            {
+                id: "9.4",
+                name: "Evolutionary Population",
+                category: "Self-Improvement",
+                tags: ["experimental", "high-complexity"],
+                problem: "Single approach may be suboptimal",
+                solution: "Maintain population; evolve via selection/mutation",
+                whenToUse: "Exploratory domains with unclear optima",
+                related: []
+            },
+            {
+                id: "9.5",
+                name: "Continuous Fine-Tuning",
+                category: "Self-Improvement",
+                tags: ["mature", "high-complexity"],
+                problem: "Static models don't adapt to changing domains",
+                solution: "Apply small weight updates during service",
+                whenToUse: "Stable feedback loop with safety guarantees",
+                related: ["Procedural Memory Pattern"]
+            },
+            {
+                id: "9.6",
+                name: "Reward-Shaping Feedback",
+                category: "Self-Improvement",
+                tags: ["emerging", "medium-complexity"],
+                problem: "Agents lack direction for improvement",
+                solution: "Use human/heuristic rewards to steer behavior",
+                whenToUse: "Clear success metrics available",
+                related: []
+            },
+            {
+                id: "9.7",
+                name: "Safety-Guard Adaptation",
+                category: "Self-Improvement",
+                tags: ["experimental", "medium-complexity", "safety"],
+                problem: "Static guards miss evolving threats",
+                solution: "Guards adjust thresholds using violation logs",
+                whenToUse: "Safety-critical systems with monitoring",
+                related: []
+            }
+        ];
+
+        let activeFilters = {
+            maturity: [],
+            complexity: [],
+            search: ''
+        };
+
+        function initializeBrowser() {
+            renderPatterns(patterns);
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Search box
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                activeFilters.search = e.target.value.toLowerCase();
+                filterPatterns();
+            });
+
+            // Tag filters
+            document.querySelectorAll('.tag-filter').forEach(button => {
+                button.addEventListener('click', () => {
+                    const type = button.dataset.type;
+                    const value = button.dataset.value;
+
+                    if (button.classList.contains('active')) {
+                        button.classList.remove('active');
+                        activeFilters[type] = activeFilters[type].filter(v => v !== value);
+                    } else {
+                        button.classList.add('active');
+                        activeFilters[type].push(value);
+                    }
+
+                    filterPatterns();
+                });
+            });
+        }
+
+        function filterPatterns() {
+            let filtered = patterns;
+
+            // Apply maturity filter
+            if (activeFilters.maturity.length > 0) {
+                filtered = filtered.filter(p =>
+                    p.tags.some(tag => activeFilters.maturity.includes(tag))
+                );
+            }
+
+            // Apply complexity filter
+            if (activeFilters.complexity.length > 0) {
+                filtered = filtered.filter(p =>
+                    p.tags.some(tag => activeFilters.complexity.map(c => c + '-complexity').includes(tag))
+                );
+            }
+
+            // Apply search filter
+            if (activeFilters.search) {
+                filtered = filtered.filter(p => {
+                    const searchStr = activeFilters.search;
+                    return p.name.toLowerCase().includes(searchStr) ||
+                           p.problem.toLowerCase().includes(searchStr) ||
+                           p.solution.toLowerCase().includes(searchStr) ||
+                           p.whenToUse.toLowerCase().includes(searchStr) ||
+                           p.category.toLowerCase().includes(searchStr);
+                });
+            }
+
+            renderPatterns(filtered);
+        }
+
+        function renderPatterns(patternsToRender) {
+            const grid = document.getElementById('patternGrid');
+
+            if (patternsToRender.length === 0) {
+                grid.innerHTML = '<div class="no-results">No patterns match your filters. Try adjusting your search criteria.</div>';
+                document.getElementById('resultCount').textContent = 'No patterns found';
+                return;
+            }
+
+            // Group by category
+            const grouped = {};
+            patternsToRender.forEach(p => {
+                if (!grouped[p.category]) grouped[p.category] = [];
+                grouped[p.category].push(p);
+            });
+
+            let html = '';
+            Object.keys(grouped).sort().forEach(category => {
+                html += `<div class="category-header">${category}</div>`;
+                grouped[category].forEach(pattern => {
+                    html += createPatternCard(pattern);
+                });
+            });
+
+            grid.innerHTML = html;
+            document.getElementById('resultCount').textContent = `Showing ${patternsToRender.length} patterns`;
+        }
+
+        function createPatternCard(pattern) {
+            const tagsHtml = pattern.tags.map(tag =>
+                `<span class="tag ${tag.replace(/\s+/g, '-')}">${tag}</span>`
+            ).join('');
+
+            const relatedHtml = pattern.related.length > 0
+                ? `<div class="pattern-related">
+                     <strong>Related:</strong> ${pattern.related.map(r =>
+                        `<a href="#" onclick="searchFor('${r}')">${r}</a>`
+                     ).join(' · ')}
+                   </div>`
+                : '';
+
+            return `
+                <div class="pattern-card">
+                    <div class="pattern-header">
+                        <div>
+                            <span class="pattern-id">${pattern.id}</span>
+                            <h3 class="pattern-name">${pattern.name}</h3>
+                        </div>
+                        <span class="pattern-category">${pattern.category}</span>
+                    </div>
+                    <div class="pattern-tags">${tagsHtml}</div>
+                    <div class="pattern-problem"><strong>Problem:</strong> ${pattern.problem}</div>
+                    <div class="pattern-solution"><strong>Solution:</strong> ${pattern.solution}</div>
+                    <div class="pattern-when"><strong>When to use:</strong> ${pattern.whenToUse}</div>
+                    ${relatedHtml}
+                </div>
+            `;
+        }
+
+        function resetFilters() {
+            activeFilters = {
+                maturity: [],
+                complexity: [],
+                search: ''
+            };
+            document.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+            document.getElementById('searchBox').value = '';
+            renderPatterns(patterns);
+        }
+
+        function searchFor(term) {
+            document.getElementById('searchBox').value = term;
+            activeFilters.search = term.toLowerCase();
+            filterPatterns();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showDependencyGraph() {
+            alert('Dependency visualization would open here. This would show an interactive graph of how patterns relate to each other.');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeBrowser);
+    </script>
+</body>
+</html>
