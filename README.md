@@ -13,7 +13,22 @@ The **Agentic Patterns Library** is a curated collection of design patterns, imp
 ## 🚀 Quick Start
 
 ### Explore Patterns Online
-Open the [Interactive Pattern Browser](./tools/pattern-browser.html) to search and filter patterns by category, maturity, and use case.
+
+**Option 1: View on GitHub Pages** (Recommended)
+- [Interactive Pattern Browser](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter patterns
+- [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Find the right pattern
+
+**Option 2: View Locally**
+```bash
+# Clone and open the HTML files directly
+git clone https://github.com/thisisartium/agentic-patterns
+cd agentic-patterns
+# Open in your browser:
+open tools/pattern-browser.html  # macOS
+# OR
+xdg-open tools/pattern-browser.html  # Linux
+# OR simply drag the HTML file to your browser
+```
 
 ### Try a Pattern in 5 Minutes
 
@@ -28,7 +43,7 @@ python examples/python-implementation.py
 
 ### Find the Right Pattern
 
-Not sure which pattern to use? Try our [Pattern Selector Tool](./tools/pattern-selector.html) or check out the decision flowchart:
+Not sure which pattern to use? Try our [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) or check out the decision flowchart:
 
 ```mermaid
 graph TD
@@ -103,11 +118,17 @@ translators = registry.discover(capability="translation", language="es")
 
 ## 🔧 Tools & Utilities
 
-### Pattern Selector
-[Interactive Pattern Selector Tool](./tools/pattern-selector.html) - Find the right pattern for your use case
+### Interactive Tools
+**View these tools online (GitHub Pages):**
+- [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Find the right pattern for your use case
+- [Pattern Browser](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter all patterns
 
-### Pattern Browser
-[Interactive Pattern Browser](./tools/pattern-browser.html) - Search and filter all patterns
+**Or run locally:**
+```bash
+cd tools/
+python -m http.server 8000  # Python 3
+# Then open http://localhost:8000 in your browser
+```
 
 ## 📊 Performance Benchmarks
 
