@@ -3,9 +3,8 @@
 > A comprehensive collection of battle-tested patterns for building multi-agent systems at scale
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Patterns: 75+](https://img.shields.io/badge/Patterns-75%2B-green)](./patterns-catalog)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
-[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://agentic-patterns.dev)
+[![Patterns: 50+](https://img.shields.io/badge/Patterns-50%2B-green)](./reference/patterns-index.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/thisisartium/agentic-patterns/pulls)
 
 ## 🎯 What is This?
 
@@ -14,20 +13,17 @@ The **Agentic Patterns Library** is a curated collection of design patterns, imp
 ## 🚀 Quick Start
 
 ### Explore Patterns Online
-Visit our [Interactive Pattern Explorer](https://agentic-patterns.dev/explorer) to browse patterns by category, maturity, and use case.
+Open the [Interactive Pattern Browser](./tools/pattern-browser.html) to search and filter patterns by category, maturity, and use case.
 
 ### Try a Pattern in 5 Minutes
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/agentic-patterns
+git clone https://github.com/thisisartium/agentic-patterns
 cd agentic-patterns
 
-# Run a simple agent registry pattern example
-docker-compose -f playground/docker/agent-registry.yml up
-
-# Or use our CLI to scaffold a new project
-npx create-agentic-system --pattern hierarchical --language python my-agent-system
+# Run the example implementation
+python examples/python-implementation.py
 ```
 
 ### Find the Right Pattern
@@ -50,28 +46,28 @@ graph TD
 ## 📚 Pattern Categories
 
 ### Foundation Patterns (Required Infrastructure)
-- **[Agent Registry](./docs/patterns/foundation/agent-registry.md)** - Dynamic agent discovery and registration
-- **[Message Transport](./docs/patterns/foundation/message-transport.md)** - Reliable inter-agent communication
-- **[Lifecycle Management](./docs/patterns/foundation/lifecycle-management.md)** - Agent lifecycle orchestration
+- **Agent Registry** - Dynamic agent discovery and registration
+- **Message Transport** - Reliable inter-agent communication
+- **Lifecycle Management** - Agent lifecycle orchestration
 
 ### Communication Patterns
-- **[Request-Reply](./docs/patterns/communication/request-reply.md)** - Synchronous query-response
-- **[Publish-Subscribe](./docs/patterns/communication/publish-subscribe.md)** - Event-driven fan-out
-- **[Blackboard](./docs/patterns/communication/blackboard.md)** - Shared collaborative workspace
-- **[Model Context Protocol](./docs/patterns/communication/mcp.md)** - Controlled tool access
+- **Request-Reply** - Synchronous query-response
+- **Publish-Subscribe** - Event-driven fan-out
+- **Blackboard** - Shared collaborative workspace
+- **Model Context Protocol** - Controlled tool access
 
 ### Orchestration Patterns
-- **[Sequential](./docs/patterns/orchestration/sequential.md)** - Linear task execution
-- **[Concurrent](./docs/patterns/orchestration/concurrent.md)** - Parallel task processing
-- **[Hierarchical](./docs/patterns/orchestration/hierarchical.md)** - Manager-worker delegation
-- **[Market-Based](./docs/patterns/orchestration/market-based.md)** - Auction-based allocation
+- **Sequential** - Linear task execution
+- **Concurrent** - Parallel task processing
+- **Hierarchical** - Manager-worker delegation
+- **Market-Based** - Auction-based allocation
 
 ### Context Management
-- **[Shared Memory](./docs/patterns/context/shared-memory.md)** - Centralized state store
-- **[Progressive Compression](./docs/patterns/context/compression.md)** - Context size management
-- **[Semantic Memory](./docs/patterns/context/semantic-memory.md)** - Knowledge retrieval
+- **Shared Memory** - Centralized state store
+- **Progressive Compression** - Context size management
+- **Semantic Memory** - Knowledge retrieval
 
-[View all 75+ patterns →](./reference/patterns-index.md)
+[View all 50+ patterns →](./reference/patterns-index.md)
 
 ## 🛠️ Implementations
 
@@ -96,51 +92,22 @@ registry.register(
 translators = registry.discover(capability="translation", language="es")
 ```
 
-### TypeScript
-```typescript
-import { HierarchicalOrchestrator, Worker } from 'agentic-patterns';
+[Browse example implementation →](./examples/)
 
-const orchestrator = new HierarchicalOrchestrator();
-const workers = [
-    new Worker('research', researchConfig),
-    new Worker('analysis', analysisConfig),
-    new Worker('reporting', reportingConfig)
-];
+## 🏗️ Real-World Use Cases
 
-await orchestrator.execute(task, workers);
-```
-
-[Browse all implementations →](./examples/)
-
-## 🏗️ Real-World Case Studies
-
-Learn from production deployments:
-
-- **[E-Commerce Assistant](./case-studies/e-commerce-assistant)** - Multi-agent customer support system handling 10K+ queries/day
-- **[Research Platform](./case-studies/research-platform)** - Distributed research agents with shared knowledge base
-- **[DevOps Automation](./case-studies/devops-automation)** - Self-healing infrastructure with agent swarms
-- **[Financial Analysis](./case-studies/financial-analysis)** - Market-based coordination for portfolio optimization
+- **E-Commerce Assistant** - Multi-agent customer support system
+- **Research Platform** - Distributed research agents with shared knowledge base
+- **DevOps Automation** - Self-healing infrastructure with agent swarms
+- **Financial Analysis** - Market-based coordination for portfolio optimization
 
 ## 🔧 Tools & Utilities
 
 ### Pattern Selector
-Interactive tool to find the right pattern for your use case
-```bash
-npm install -g agentic-patterns-cli
-agentic-patterns select
-```
+[Interactive Pattern Selector Tool](./tools/pattern-selector.html) - Find the right pattern for your use case
 
-### Pattern Validator
-Ensure your implementation follows pattern best practices
-```bash
-agentic-patterns validate --pattern agent-registry src/
-```
-
-### Visualization Tools
-Generate architecture diagrams from pattern configurations
-```bash
-agentic-patterns visualize config.yaml --output architecture.png
-```
+### Pattern Browser
+[Interactive Pattern Browser](./tools/pattern-browser.html) - Search and filter all patterns
 
 ## 📊 Performance Benchmarks
 
@@ -153,31 +120,22 @@ Compare patterns across key metrics:
 | Hierarchical | 50ms | Medium | High | Medium |
 | Market-Based | 100ms | Low | High | High |
 
-[View detailed benchmarks →](./benchmarks)
 
 ## 🎓 Learning Resources
 
 ### Getting Started
-- [What are Agentic Patterns?](./docs/getting-started/introduction.md)
-- [Your First Multi-Agent System](./docs/getting-started/first-system.md)
-- [Pattern Selection Guide](./docs/getting-started/selection-guide.md)
-
-### Workshops
-- **Beginner**: Building Your First Agent Registry (2 hours)
-- **Intermediate**: Orchestration Patterns Deep Dive (4 hours)
-- **Advanced**: Production-Ready Multi-Agent Platforms (8 hours)
-
-### Video Tutorials
-- [YouTube Playlist: Agentic Patterns Explained](https://youtube.com/...)
-- [Pattern of the Week Series](https://youtube.com/...)
+- [Full Pattern Documentation](./reference/patterns-full.md)
+- [Concise Pattern Reference](./reference/patterns-concise.md)
+- [Pattern Index by Category](./reference/patterns-index.md)
+- [Example Python Implementation](./examples/python-implementation.py)
 
 ## 🤝 Contributing
 
 We welcome contributions! Whether it's a new pattern, implementation, or improvement:
 
-1. Check our [Contributing Guide](./CONTRIBUTING.md)
-2. Browse [Good First Issues](https://github.com/yourusername/agentic-patterns/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-3. Join our [Discord Community](https://discord.gg/...)
+1. Fork the repository
+2. Browse [Issues](https://github.com/thisisartium/agentic-patterns/issues)
+3. Submit a pull request
 
 ### Pattern Proposal Template
 ```yaml
@@ -189,13 +147,6 @@ forces: What tensions exist?
 solution: How does the pattern work?
 ```
 
-## 📈 Adoption
-
-Used by teams at:
-
-<p align="center">
-  <img src="./docs/images/adopters.png" alt="Companies using Agentic Patterns" />
-</p>
 
 ## 🗺️ Roadmap
 
@@ -206,20 +157,17 @@ Used by teams at:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Original patterns research by [Team/Authors]
-- Community contributors (see [CONTRIBUTORS.md](./CONTRIBUTORS.md))
 - Inspired by Gang of Four patterns and enterprise integration patterns
+- Based on real-world multi-agent system implementations
 
 ## 📞 Support
 
-- 📧 Email: patterns@agentic.dev
-- 💬 Discord: [Join our community](https://discord.gg/...)
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/agentic-patterns/issues)
-- 📖 Documentation: [agentic-patterns.dev](https://agentic-patterns.dev)
+- 🐛 Issues: [GitHub Issues](https://github.com/thisisartium/agentic-patterns/issues)
+- 📖 Documentation: [Pattern Index](./reference/patterns-index.md)
 
 ---
 
@@ -227,8 +175,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   Made with ❤️ by the Agentic Patterns Community
 </p>
 
-<p align="center">
-  <a href="https://star-history.com/#yourusername/agentic-patterns&Date">
-    <img src="https://api.star-history.com/svg?repos=yourusername/agentic-patterns&type=Date" alt="Star History Chart">
-  </a>
-</p>
