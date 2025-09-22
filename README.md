@@ -2,6 +2,8 @@
 
 > A comprehensive collection of battle-tested patterns for building multi-agent systems at scale
 
+> **📌 Setup Required**: To use the interactive tools online, please [enable GitHub Pages](https://github.com/thisisartium/agentic-patterns/settings/pages) in your repository settings (Source: Deploy from branch, Branch: main, Folder: / (root))
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Patterns: 50+](https://img.shields.io/badge/Patterns-50%2B-green)](./reference/patterns-index.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/thisisartium/agentic-patterns/pulls)
@@ -14,11 +16,7 @@ The **Agentic Patterns Library** is a curated collection of design patterns, imp
 
 ### Explore Patterns Online
 
-**Option 1: View on GitHub Pages** (Recommended)
-- [Interactive Pattern Browser](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter patterns
-- [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Find the right pattern
-
-**Option 2: View Locally**
+**Option 1: View Locally** (For now - GitHub Pages pending activation)
 ```bash
 # Clone and open the HTML files directly
 git clone https://github.com/thisisartium/agentic-patterns
@@ -43,7 +41,7 @@ python examples/python-implementation.py
 
 ### Find the Right Pattern
 
-Not sure which pattern to use? Try our [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) or check out the decision flowchart:
+Not sure which pattern to use? Open the Pattern Selector Tool locally (tools/pattern-selector.html) or check out the decision flowchart:
 
 ```mermaid
 graph TD
@@ -119,11 +117,7 @@ translators = registry.discover(capability="translation", language="es")
 ## 🔧 Tools & Utilities
 
 ### Interactive Tools
-**View these tools online (GitHub Pages):**
-- [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Find the right pattern for your use case
-- [Pattern Browser](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter all patterns
-
-**Or run locally:**
+**Run locally:**
 ```bash
 cd tools/
 python -m http.server 8000  # Python 3
