@@ -2,7 +2,6 @@
 
 > A comprehensive collection of battle-tested patterns for building multi-agent systems at scale
 
-> **📌 Setup Required**: To use the interactive tools online, please [enable GitHub Pages](https://github.com/thisisartium/agentic-patterns/settings/pages) in your repository settings (Source: Deploy from branch, Branch: main, Folder: / (root))
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Patterns: 50+](https://img.shields.io/badge/Patterns-50%2B-green)](./reference/patterns-index.md)
@@ -16,7 +15,11 @@ The **Agentic Patterns Library** is a curated collection of design patterns, imp
 
 ### Explore Patterns Online
 
-**Option 1: View Locally** (For now - GitHub Pages pending activation)
+**Interactive Tools** (Live on GitHub Pages):
+- 🔍 [**Pattern Browser**](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter all patterns
+- 🎯 [**Pattern Selector**](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Find the right pattern for your use case
+
+**Or clone locally**:
 ```bash
 # Clone and open the HTML files directly
 git clone https://github.com/thisisartium/agentic-patterns
@@ -41,7 +44,7 @@ python examples/python-implementation.py
 
 ### Find the Right Pattern
 
-Not sure which pattern to use? Open the Pattern Selector Tool locally (tools/pattern-selector.html) or check out the decision flowchart:
+Not sure which pattern to use? Try our [Pattern Selector Tool](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) or check out the decision flowchart:
 
 ```mermaid
 graph TD
@@ -117,11 +120,16 @@ translators = registry.discover(capability="translation", language="es")
 ## 🔧 Tools & Utilities
 
 ### Interactive Tools
-**Run locally:**
+
+🌐 **Use Online:**
+- [**Pattern Browser**](https://thisisartium.github.io/agentic-patterns/tools/pattern-browser.html) - Search and filter patterns with live controls
+- [**Pattern Selector**](https://thisisartium.github.io/agentic-patterns/tools/pattern-selector.html) - Answer questions to get personalized recommendations
+
+💻 **Or run locally:**
 ```bash
 cd tools/
-python -m http.server 8000  # Python 3
-# Then open http://localhost:8000 in your browser
+python -m http.server 8000
+# Open http://localhost:8000 in your browser
 ```
 
 ## 📊 Performance Benchmarks
@@ -165,10 +173,7 @@ solution: How does the pattern work?
 
 ## 🗺️ Roadmap
 
-- [ ] **Q1 2025**: Pattern playground with online sandboxes
-- [ ] **Q2 2025**: Visual pattern designer tool
-- [ ] **Q3 2025**: Pattern composition framework
-- [ ] **Q4 2025**: Production deployment templates
+
 
 ## 📄 License
 
@@ -176,7 +181,6 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Inspired by Gang of Four patterns and enterprise integration patterns
 - Based on real-world multi-agent system implementations
 
 ## 📞 Support
